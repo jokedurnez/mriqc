@@ -32,4 +32,4 @@ export LC_ALL=C.UTF-8
 " >> /environment
 
 # install latest mriqc and requirements
-pip install https://github.com/poldracklab/mriqc/archive/master.zip
+pip install mriqc==0.9.1

@@ -1,25 +1,24 @@
-# Run MRIQC through singularity
-BootStrap: docker 
-From: poldracklab/neuroimaging-core:base-0.0.2 
+Bootstrap: docker
+From: poldracklab/mriqc
 
 %runscript
-mriqc "$@" %post
 
-# Download/install miniconda3
-curl -sSLO https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-/bin/bash Miniconda3-latest-Linux-x86_64.sh -b -p /usr/local/miniconda && \
-rm Miniconda3-latest-Linux-x86_64.sh
+exec /usr/bin/run_mriqc
 
-# make some mount points
-mkdir /om
+% post
+
+# Make script executable
+
+chmod +x /usr/bin/run_mriqc
+
+# Make local folders
+
+mkdir /share
 mkdir /scratch
+mkdir /local-scratch
 
-# create conda environment
-conda config --add channels conda-forge && \
-conda install -y numpy>=1.12.0 scipy matplotlib && \
-python -c "from matplotlib import font_manager"
+# add environment variables
 
-# write out to global environment
 echo "
 export PATH=/usr/local/miniconda/bin:$PATH
 export PYTHONPATH=/usr/local/miniconda/lib/python3.5/site-packages
@@ -28,8 +27,5 @@ export LANG=C.UTF-8
 export LC_ALL=C.UTF-8
 . /etc/fsl/fsl.sh
 . /etc/afni/afni.sh
-	    
-" >> /environment
 
-# install latest mriqc and requirements
-pip install mriqc==0.9.1
+" >> /environment
